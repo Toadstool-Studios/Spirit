@@ -98,10 +98,11 @@
   "item.spirit.soul_steel_bow.description": "§b\uD83C\uDFF9§r 需要任意一个灵魂水晶来发射",
   "item.spirit.soul_steel_tools.description": "§b\uD83D\uDDE1§r 击杀获取额外的 \uD83D\uDD25",
   "item.spirit.soul_steel_tools.soul_fire_repairable": "§b\uD83D\uDD25§r 在灵魂火中修复工具",
-  "item.spirit.soul_steel_wand.desc": "§b\uD83D\uDD25§r 在灵魂基座上将灵魂转化为粗制灵魂"
+  "item.spirit.soul_steel_wand.desc": "§b\uD83D\uDD25§r 在灵魂基座上将灵魂转化为粗制灵魂",
 
   "rarity.spirit.common": "普通",
   "rarity.spirit.uncommon": "不凡",
   "rarity.spirit.rare": "罕见",
   "rarity.spirit.epic": "史诗",
   "rarity.spirit.legendary": "传说"
+}
