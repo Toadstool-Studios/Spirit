@@ -1,5 +1,6 @@
 package earth.terrarium.spirit.client.forge;
 
+import earth.terrarium.spirit.client.SpiritClient;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -24,4 +25,5 @@ public class SpiritClientImpl {
     public static void registerRenderLayer(Block block, RenderType type) {
         ItemBlockRenderTypes.setRenderLayer(block, type);
     }
+
 }

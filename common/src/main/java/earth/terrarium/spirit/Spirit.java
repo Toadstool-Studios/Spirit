@@ -46,6 +46,7 @@ public class Spirit {
         SpiritRecipes.RECIPE_TYPES.init();
         SpiritRecipes.RECIPE_SERIALIZERS.init();
         SpiritEntities.ENTITIES.init();
+        SpiritParticles.PARTICLE_TYPES.init();
         NetworkHandling.init();
         SpiritAbilities.init();
 

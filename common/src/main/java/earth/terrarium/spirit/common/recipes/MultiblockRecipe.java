@@ -15,7 +15,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public record MultiblockRecipe(ResourceLocation id, short duration, boolean destroysStructure, SoulfireMultiblock multiblock, Ingredient catalyst, RitualResult<?> result) implements CodecRecipe<Container> {
+public record MultiblockRecipe(ResourceLocation id, short duration, boolean destroysStructure, SoulfireMultiblock multiblock, Ingredient catalyst, RitualResult<?> result) implements CodecRecipe<Container>, MagicalRecipe {
     public static Codec<MultiblockRecipe> codec(ResourceLocation id) {
         return RecordCodecBuilder.create(instance -> instance.group(
                 RecordCodecBuilder.point(id),

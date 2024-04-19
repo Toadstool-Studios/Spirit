@@ -1,6 +1,5 @@
 package earth.terrarium.spirit.common.item.crystals;
 
-import earth.terrarium.spirit.api.souls.base.SoulContainer;
 import earth.terrarium.spirit.api.souls.base.SoulContainingItem;
 import earth.terrarium.spirit.api.utils.EntityRarity;
 import earth.terrarium.spirit.api.souls.stack.SoulStack;
@@ -35,7 +34,7 @@ public class SoulCrystalItem extends BlockItem implements SoulContainingItem<Sou
 
     @Override
     public void appendHoverText(@NotNull ItemStack itemStack, @Nullable Level level, @NotNull List<Component> list, @NotNull TooltipFlag tooltipFlag) {
-        SoulStack container = getContainer(itemStack).getSoulStack(0);
+        SoulStack container = getContainer(itemStack).getStackInSlot(0);
         Component component;
         if (container.isEmpty() || container.getEntity() == null) {
             component = Component.translatable("item.spirit.soul_crystal.none");

@@ -1,7 +1,7 @@
 package earth.terrarium.spirit.common.block;
 
 import earth.terrarium.spirit.Spirit;
-import earth.terrarium.spirit.api.rituals.components.RitualComponent;
+import earth.terrarium.spirit.api.utils.RitualManager;
 import earth.terrarium.spirit.common.entity.SoulReceptacle;
 import earth.terrarium.spirit.common.recipes.MultiblockRecipe;
 import earth.terrarium.spirit.common.recipes.TransmutationRecipe;
@@ -21,12 +21,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoulFireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
 public class RagingSoulFireBlock extends SoulFireBlock {
@@ -68,6 +67,8 @@ public class RagingSoulFireBlock extends SoulFireBlock {
                                     soulReceptacle.setPos(blockPos.getX() + 0.5, blockPos.getY() + 1, blockPos.getZ() + 0.5);
                                     level.addFreshEntity(soulReceptacle);
                                     soulReceptacle.setResult(itemE.getItem().copyWithCount(1), multiblockRecipe, blockPos);
+                                    level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), RagingSoulFireBlock.UPDATE_ALL);
+                                    level.playLocalSound((double) blockPos.getX() + 0.5, (double) blockPos.getY() + 0.5, (double) blockPos.getZ() + 0.5, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0F + level.random.nextFloat(), level.random.nextFloat() * 0.7F + 0.3F, false);
                                 }
                                 break;
                             } else {
@@ -82,36 +83,22 @@ public class RagingSoulFireBlock extends SoulFireBlock {
                     // Transmutation recipe
                     for (TransmutationRecipe transmutationRecipe : level.getRecipeManager().getAllRecipesFor(SpiritRecipes.TRANSMUTATION.get())) {
                         if (transmutationRecipe.catalyst().test(itemE.getItem())) {
-                            Map<BlockPos, RitualComponent<?>> components = new HashMap<>();
-                            if (!transmutationRecipe.inputs().isEmpty()) {
-                                for (RitualComponent<?> input : transmutationRecipe.inputs()) {
-                                    boolean foundMatch = false;
-                                    for (BlockPos componentPos : BlockPos.betweenClosedStream(blockPos.offset(-3, 0, -3), blockPos.offset(3, 0, 3)).map(BlockPos::immutable).filter(pos -> !components.containsKey(pos)).toList()) {
-                                        if (input.matches(level, componentPos.immutable(), blockPos)) {
-                                            components.put(componentPos, input);
-                                            foundMatch = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!foundMatch) {
-                                        break;
-                                    }
-                                }
-                            }
-                            if (transmutationRecipe.inputs().isEmpty() || components.size() == transmutationRecipe.inputs().size()) {
-                                if (transmutationRecipe.duration() > 0) {
-                                    SoulReceptacle soulReceptacle = SpiritEntities.SOUL_RECEPTACLE.get().create(level);
-                                    if (soulReceptacle != null) {
-                                        itemE.setItem(itemE.getItem().copyWithCount(itemE.getItem().getCount() - 1));
-                                        soulReceptacle.setPos(blockPos.getX() + 0.5, blockPos.getY() + 1, blockPos.getZ() + 0.5);
-                                        level.addFreshEntity(soulReceptacle);
-                                        soulReceptacle.setResult(itemE.getItem().copyWithCount(1), transmutationRecipe, blockPos);
-                                    }
-                                } else {
-                                    transmutationRecipe.result().onRitualComplete(level, blockPos, itemE.getItem());
-                                    components.forEach((pos, component) -> component.onRitualComplete(level, pos, blockPos));
+                            var manager = RitualManager.of(serverLevel, blockPos, transmutationRecipe);
+                            if (manager == null) return;
+                            if (transmutationRecipe.duration() > 0) {
+                                SoulReceptacle soulReceptacle = SpiritEntities.SOUL_RECEPTACLE.get().create(level);
+                                if (soulReceptacle != null) {
                                     itemE.setItem(itemE.getItem().copyWithCount(itemE.getItem().getCount() - 1));
+                                    soulReceptacle.setPos(blockPos.getX() + 0.5, blockPos.getY() + 1, blockPos.getZ() + 0.5);
+                                    level.addFreshEntity(soulReceptacle);
+                                    soulReceptacle.setResult(itemE.getItem().copyWithCount(1), transmutationRecipe, blockPos);
+                                    level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), RagingSoulFireBlock.UPDATE_ALL);
+                                    level.playLocalSound((double) blockPos.getX() + 0.5, (double) blockPos.getY() + 0.5, (double) blockPos.getZ() + 0.5, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0F + level.random.nextFloat(), level.random.nextFloat() * 0.7F + 0.3F, false);
                                 }
+                            } else {
+                                transmutationRecipe.result().onRitualComplete(level, blockPos, itemE.getItem());
+                                manager.completeRitual(serverLevel);
+                                itemE.setItem(itemE.getItem().copyWithCount(itemE.getItem().getCount() - 1));
                             }
                         }
                     }

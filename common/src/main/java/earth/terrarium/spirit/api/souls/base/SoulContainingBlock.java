@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public interface SoulContainingBlock<T extends SoulContainer & Updatable> {
+public interface SoulContainingBlock<T extends SoulContainer> {
     @Nullable
     T getContainer(Level level, BlockPos pos, @Nullable BlockState state, @Nullable BlockEntity entity, @Nullable Direction direction);
 }

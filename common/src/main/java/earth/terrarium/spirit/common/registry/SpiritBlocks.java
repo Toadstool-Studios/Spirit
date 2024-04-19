@@ -23,6 +23,10 @@ public class SpiritBlocks {
     public static final RegistryEntry<Block> FROSTED_LAVA = BLOCKS.register("frosted_lava", () -> new FrostedLavaBlock(Block.Properties.of().lightLevel(arg -> 10).sound(SoundType.NETHERRACK)));
 
     public static final RegistryEntry<Block> SOUL_CAGE = BLOCKS.register("soul_cage", () -> new SoulCageBlock(Block.Properties.of().strength(5.0F, 6.0F).sound(SoundType.METAL).noOcclusion()));
+    public static final RegistryEntry<Block> ATTUNEMENT_TABLE = BLOCKS.register("attunement_table", () -> new AttunementTableBlock(Block.Properties.of().strength(5.0F, 6.0F).sound(SoundType.METAL).noOcclusion()));
+    public static final RegistryEntry<Block> DUNGEON_FRAME = BLOCKS.register("dungeon_frame", () -> new DungeonFrameBlock(Block.Properties.of().strength(5.0F, 6.0F).sound(SoundType.METAL).noOcclusion()));
+
+    public static final RegistryEntry<Block> PORTAL = BLOCKS.register("portal", () -> new Block(Block.Properties.of().noCollission().strength(-1.0F, 3600000.0F).lightLevel(arg -> 11).noOcclusion()));
 
     //Normal Blocks
     public static final RegistryEntry<Block> SOUL_STEEL_BLOCK = BLOCKS.register("soul_steel_block", () -> new Block(Block.Properties.of().strength(5.0F, 6.0F).sound(SoundType.METAL).noOcclusion()));

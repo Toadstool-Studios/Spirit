@@ -1,9 +1,9 @@
 package earth.terrarium.spirit.common.entity;
 
 import com.mojang.datafixers.util.Either;
-import earth.terrarium.spirit.api.rituals.components.RitualComponent;
 import earth.terrarium.spirit.api.rituals.results.RitualResult;
 import earth.terrarium.spirit.api.rituals.results.impl.EntityResult;
+import earth.terrarium.spirit.api.utils.RitualManager;
 import earth.terrarium.spirit.common.recipes.MultiblockRecipe;
 import earth.terrarium.spirit.common.recipes.TransmutationRecipe;
 import net.minecraft.core.BlockPos;
@@ -26,19 +26,15 @@ import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class SoulReceptacle extends Entity {
     private static final EntityDataAccessor<Integer> PROCESS_TIME = SynchedEntityData.defineId(SoulReceptacle.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<String> MULTIBLOCK_RECIPE = SynchedEntityData.defineId(SoulReceptacle.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> TRANSMUTATION_RECIPE = SynchedEntityData.defineId(SoulReceptacle.class, EntityDataSerializers.STRING);
 
-    Map<BlockPos, RitualComponent<?>> components = new HashMap<>();
     BlockPos recipeOrigin = BlockPos.ZERO;
     ItemStack catalyst = ItemStack.EMPTY;
     Entity entityResult;
+    RitualManager ritualManager = null;
 
     public SoulReceptacle(EntityType<?> entityType, Level level) {
         super(entityType, level);
@@ -98,14 +94,14 @@ public class SoulReceptacle extends Entity {
     public void setResult(ItemStack catalyst, MultiblockRecipe recipe, BlockPos origin) {
         entityData.set(MULTIBLOCK_RECIPE, recipe.getId().toString());
         this.recipeOrigin = origin.immutable();
-        this.catalyst = catalyst;
+        this.catalyst = catalyst.copy();
         setProcessTime(0);
     }
 
     public void setResult(ItemStack catalyst, TransmutationRecipe recipe, BlockPos origin) {
         entityData.set(TRANSMUTATION_RECIPE, recipe.getId().toString());
         this.recipeOrigin = origin.immutable();
-        this.catalyst = catalyst;
+        this.catalyst = catalyst.copy();
         setProcessTime(0);
     }
 
@@ -162,50 +158,42 @@ public class SoulReceptacle extends Entity {
                             discard();
                         }
                     } else {
-                        Block.popResource(level(), recipeOrigin, catalyst);
+                        Block.popResource(level(), blockPosition(), catalyst);
                         discard();
                     }
                 }
                 else if (recipe.right().isPresent()) {
                     TransmutationRecipe transmutationRecipe = recipe.right().get();
-                    if (components.isEmpty() && !transmutationRecipe.inputs().isEmpty()) {
-                        for (RitualComponent<?> input : transmutationRecipe.inputs()) {
-                            boolean foundMatch = false;
-                            List<BlockPos> list = BlockPos.betweenClosedStream(recipeOrigin.immutable().offset(-3, 0, -3), recipeOrigin.immutable().offset(3, 0, 3)).map(BlockPos::immutable).filter(pos -> !components.containsKey(pos)).toList();
-                            for (BlockPos blockPos : list) {
-                                if (input.matches(level(), blockPos, recipeOrigin)) {
-                                    components.put(blockPos, input);
-                                    foundMatch = true;
-                                    break;
-                                }
-                            }
-                            if (!foundMatch) {
-                                Block.popResource(level(), recipeOrigin, catalyst);
-                                discard();
-                                return;
-                            }
+                    if (ritualManager == null) {
+                        ritualManager = RitualManager.of(serverLevel, recipeOrigin, transmutationRecipe);
+
+                        if (ritualManager == null) {
+                            Block.popResource(level(), blockPosition(), catalyst);
+                            discard();
+                        } else {
+                            ritualManager.beginRitual(serverLevel);
                         }
                     }
+
                     if (getProcessTime() < transmutationRecipe.duration()) {
                         incrementProcessTime();
                         if (getProcessTime() % 10 == 0) {
-                            if (!components.isEmpty() && !components.entrySet().stream().allMatch(entry -> entry.getValue().matches(level(), entry.getKey(), recipeOrigin))) {
-                                Block.popResource(level(), recipeOrigin, catalyst);
+                            boolean ritualMatches = ritualManager.validateComponents(serverLevel);
+
+                            if (!ritualMatches) {
+                                ritualManager.abortRitual(serverLevel);
+                                Block.popResource(level(), blockPosition(), catalyst);
                                 discard();
-                            } else {
-                                components.forEach((blockPos, ritualComponent) -> serverLevel.sendParticles(ParticleTypes.SOUL, blockPos.getX() + 0.5, blockPos.getY() + 1, blockPos.getZ() + 0.5, 1, 0.1, 0.1, 0.1, 0));
                             }
                         }
                     } else {
-                        if (components.isEmpty() || components.entrySet().stream().allMatch(entry -> entry.getValue().matches(level(), entry.getKey(), recipeOrigin))) {
+                        if (ritualManager.validateComponents(serverLevel)) {
+                            ritualManager.completeRitual(serverLevel);
                             transmutationRecipe.result().onRitualComplete(level(), blockPosition(), catalyst);
-                            components.forEach((blockPos, ritualComponent) -> {
-                                serverLevel.sendParticles(ParticleTypes.SMOKE, blockPos.getX() + 0.5, blockPos.getY() + 1, blockPos.getZ() + 0.5, 10, 0.3, 0.3, 0.3, 0.01);
-                            });
-                            components.forEach((blockPos, ritualComponent) -> ritualComponent.onRitualComplete(level(), blockPos, recipeOrigin));
                             serverLevel.sendParticles(ParticleTypes.END_ROD, getX(), getY() + 1, getZ(), 10, 0.3, 0.3, 0.3, 0.1);
                             discard();
                         } else {
+                            ritualManager.abortRitual(serverLevel);
                             Block.popResource(level(), blockPosition(), catalyst);
                             discard();
                         }
@@ -216,11 +204,6 @@ public class SoulReceptacle extends Entity {
                 discard();
             }
         }
-    }
-
-    public boolean verifyTransmutationRecipe() {
-        var recipe = getRecipe();
-        return recipe != null && recipe.right().isPresent() && components.entrySet().stream().allMatch(entry -> entry.getValue().matches(level(), entry.getKey(), recipeOrigin));
     }
 
     public int getRecipeDuration() {

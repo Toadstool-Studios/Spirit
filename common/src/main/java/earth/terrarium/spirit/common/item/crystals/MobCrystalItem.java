@@ -1,8 +1,7 @@
 package earth.terrarium.spirit.common.item.crystals;
 
 import earth.terrarium.spirit.api.souls.base.SoulContainingItem;
-import earth.terrarium.spirit.common.containers.ItemWrappedMobContainer;
-import earth.terrarium.spirit.common.containers.SingleMobContainer;
+import earth.terrarium.spirit.api.souls.impl.SingleMobContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
@@ -17,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MobCrystalItem extends Item implements SoulContainingItem {
+public class MobCrystalItem extends Item implements SoulContainingItem<SingleMobContainer> {
 
     public MobCrystalItem(Properties properties) {
         super(properties);
@@ -26,17 +25,15 @@ public class MobCrystalItem extends Item implements SoulContainingItem {
     @Override
     public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag) {
         super.appendHoverText(itemStack, level, list, tooltipFlag);
-        ItemWrappedMobContainer container = getContainer(itemStack);
+        SingleMobContainer container = getContainer(itemStack);
         if (container != null) {
-            if (container.container() instanceof SingleMobContainer singleMobContainer) {
-                list.add(singleMobContainer.toComponent());
-            }
+            list.add(container.toComponent());
         }
     }
 
     @Override
-    public @Nullable ItemWrappedMobContainer getContainer(ItemStack object) {
-        return new ItemWrappedMobContainer(object, new SingleMobContainer());
+    public @Nullable SingleMobContainer getContainer(ItemStack object) {
+        return new SingleMobContainer(object);
     }
 
     @Override
@@ -46,10 +43,9 @@ public class MobCrystalItem extends Item implements SoulContainingItem {
             if (player != null) {
                 ItemStack stack = player.getItemInHand(useOnContext.getHand());
                 if (stack.getItem() instanceof MobCrystalItem) {
-                    ItemWrappedMobContainer container = getContainer(stack);
+                    SingleMobContainer container = getContainer(stack);
                     if (container != null) {
-                        LivingEntity entity = container.extractMob(useOnContext.getLevel());
-                        container.update();
+                        LivingEntity entity = container.extractMob(useOnContext.getLevel(), false);
                         if (entity != null) {
                             BlockPos offset = useOnContext.getClickedPos().relative(useOnContext.getClickedFace());
                             entity.setPos(offset.getX() + 0.5, offset.getY(), offset.getZ() + 0.5);

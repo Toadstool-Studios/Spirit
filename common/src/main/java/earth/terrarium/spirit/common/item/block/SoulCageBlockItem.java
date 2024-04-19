@@ -3,11 +3,13 @@ package earth.terrarium.spirit.common.item.block;
 import earth.terrarium.spirit.api.souls.Atunable;
 import earth.terrarium.spirit.common.blockentity.SoulCageBlockEntity;
 import earth.terrarium.spirit.common.registry.SpiritBlocks;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,9 +30,8 @@ public class SoulCageBlockItem extends BlockItem implements Atunable {
     }
 
     @Override
-    public void setAttunement(ItemStack stack, EntityType<?> type, boolean critical) {
-        stack.getOrCreateTag().putString("Entity", EntityType.getKey(type).toString());
-        stack.getOrCreateTag().putBoolean("Critical", critical);
+    public boolean meetsRequirements(Level level, BlockPos centerPos, ItemStack atunnableItem) {
+        return false;
     }
 
     @Override

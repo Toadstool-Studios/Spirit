@@ -1,6 +1,8 @@
 package earth.terrarium.spirit.api.abilities.armor;
 
 import com.google.common.collect.Multimap;
+import earth.terrarium.botarium.common.fluid.base.ItemFluidContainer;
+import earth.terrarium.botarium.util.Updatable;
 import earth.terrarium.spirit.api.abilities.ColorPalette;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -14,6 +16,7 @@ import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -26,6 +29,7 @@ public interface ArmorAbility {
     default void onUnequip(Player player, EquipmentSlot slot, ItemStack stack) {}
     default boolean onLand(Player player, EquipmentSlot slot, ItemStack stack, float distance) { return false; }
     default boolean overrideStackedOnOther(ItemStack itemStack, Slot slot, ClickAction clickAction, Player player) { return false; }
+    default <T extends ItemFluidContainer & Updatable<ItemStack>> @Nullable T getFluidContainer(ItemStack stack) { return null; }
 
     ColorPalette getColor();
 

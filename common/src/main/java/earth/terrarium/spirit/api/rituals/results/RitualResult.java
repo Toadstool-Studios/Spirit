@@ -1,6 +1,5 @@
 package earth.terrarium.spirit.api.rituals.results;
 
-import earth.terrarium.spirit.api.rituals.components.RitualComponent;
 import earth.terrarium.spirit.compat.rei.ComponentUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;

@@ -5,7 +5,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public interface MobContainer extends SoulContainer {
-    boolean insertMob(LivingEntity mob);
+    boolean insertMob(LivingEntity mob, boolean simulate);
 
-    @Nullable LivingEntity extractMob(Level level);
+    @Nullable LivingEntity extractMob(Level level, boolean simulate);
 }

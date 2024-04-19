@@ -9,8 +9,12 @@ import earth.terrarium.spirit.common.util.ClientUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -47,7 +51,13 @@ public class SpiritClientForge {
         event.register(SpiritClient.TOOL_COLOR, SpiritItems.SOUL_STEEL_HAMMER.get(), SpiritItems.SOUL_STEEL_EXCAVATOR.get(), SpiritItems.SOUL_STEEL_BATTLEAXE.get());
     }
 
+    @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(SpiritEntities.SOUL_RECEPTACLE.get(), SoulReceptacleRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void registerParticleRenderers(RegisterParticleProvidersEvent event) {
+        SpiritClient.registerParticleRenderers(event::registerSprite);
     }
 }

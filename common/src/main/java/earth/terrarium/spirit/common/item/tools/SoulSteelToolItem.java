@@ -43,8 +43,8 @@ public class SoulSteelToolItem extends DiggerItem implements SoulSteelTool {
     }
 
     @Override
-    public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int i, boolean bl) {
-        super.inventoryTick(itemStack, level, entity, i, bl);
+    public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(itemStack, level, entity, slotId, isSelected);
         if (entity instanceof Player player && (player.getMainHandItem() == itemStack || player.getOffhandItem() == itemStack)) {
             ToolAbility ability = getAbility(itemStack);
             if (ability != null) {

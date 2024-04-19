@@ -11,6 +11,9 @@ import earth.terrarium.spirit.api.souls.base.SoulContainer;
 import earth.terrarium.spirit.api.souls.base.SoulContainingBlock;
 import earth.terrarium.spirit.api.souls.util.SoulIngredient;
 import earth.terrarium.spirit.api.souls.stack.SoulStack;
+import earth.terrarium.spirit.common.blockentity.SoulCrystalBlockEntity;
+import earth.terrarium.spirit.common.containers.SoulCrystalBlockContainer;
+import earth.terrarium.spirit.common.recipes.MagicalRecipe;
 import earth.terrarium.spirit.common.registry.SpiritItems;
 import earth.terrarium.spirit.compat.rei.ComponentUtils;
 import net.minecraft.core.BlockPos;
@@ -18,38 +21,41 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public record SoulComponent(SoulIngredient soulIngredient) implements RitualComponent<SoulComponent> {
-
     public static final Serializer SERIALIZER = new Serializer();
 
     @Override
-    public boolean matches(Level level, BlockPos blockPos, BlockPos ritualPos) {
-        SoulContainer soulContainer = SoulContainer.of(level, blockPos, null);
-        if (soulContainer != null) {
-            for (SoulStack stack : soulContainer.getSouls()) {
-                if (soulIngredient.test(stack)) {
-                    return true;
-                }
-            }
+    public boolean matches(MagicalRecipe recipe, Level level, BlockPos blockPos, BlockPos ritualPos) {
+        BlockEntity blockEntity = level.getBlockEntity(blockPos);
+        if (blockEntity instanceof SoulCrystalBlockEntity crystal) {
+            SoulStack stack = crystal.getContainer().extract(1, true);
+            return soulIngredient.test(stack);
         }
         return false;
     }
 
     @Override
-    public void onRitualComplete(Level level, BlockPos componentPos, BlockPos ritualPos) {
-        SoulContainer soulContainer = SoulContainer.of(level, componentPos, null);
-        if (soulContainer != null) {
-            for (SoulStack stack : soulContainer.getSouls()) {
-                if (soulIngredient.test(stack)) {
-                    soulContainer.extract(new SoulStack(stack.getEntity(), 1), InteractionMode.NO_TAKE_BACKSIES);
-                    BlockState state = level.getBlockState(componentPos);
-                    level.sendBlockUpdated(componentPos, state, state, Block.UPDATE_ALL);
-                    return;
-                }
+    public void onRitualBegin(MagicalRecipe recipe, Level level, @Nullable BlockPos componentPos, BlockPos ritualPos) {
+
+    }
+
+    @Override
+    public void onRitualAbort(MagicalRecipe recipe, Level level, @Nullable BlockPos componentPos, BlockPos ritualPos) {
+
+    }
+
+    @Override
+    public void onRitualComplete(MagicalRecipe recipe, Level level, BlockPos componentPos, BlockPos ritualPos) {
+        if (level.getBlockEntity(componentPos) instanceof SoulCrystalBlockEntity crystal) {
+            SoulStack stack = crystal.getContainer().extract(1, false);
+            if (soulIngredient.test(stack)) {
+                crystal.getContainer().extract(1, false);
             }
         }
     }

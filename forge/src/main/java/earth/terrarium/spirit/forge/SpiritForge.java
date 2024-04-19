@@ -57,14 +57,6 @@ public class SpiritForge {
                 }
             }
         });
-        bus.addListener((EntityTeleportEvent.EnderPearl event) -> {
-            if (event.getEntity().level().isClientSide()) return;
-            if (event.getEntity() instanceof Player player) {
-                if (AbilityUtils.hasArmorAbility(player, SpiritAbilities.ENDERMAN)) {
-                    event.setAttackDamage(0);
-                }
-            }
-        });
         bus.addListener((LivingDamageEvent event) -> AbilityUtils.onEntityHit(event.getEntity(), event.getSource(), event.getAmount()));
     }
 

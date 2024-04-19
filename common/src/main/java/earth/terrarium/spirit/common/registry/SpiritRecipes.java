@@ -6,6 +6,7 @@ import com.teamresourceful.resourcefullib.common.registry.RegistryEntry;
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries;
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry;
 import earth.terrarium.spirit.Spirit;
+import earth.terrarium.spirit.common.recipes.DungeonRecipe;
 import earth.terrarium.spirit.common.recipes.MultiblockRecipe;
 import earth.terrarium.spirit.common.recipes.TransmutationRecipe;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,4 +24,8 @@ public class SpiritRecipes {
     //Multiblock
     public static final RegistryEntry<RecipeType<MultiblockRecipe>> MULTIBLOCK = RECIPE_TYPES.register("multiblock", () -> CodecRecipeType.of("multiblock"));
     public static final RegistryEntry<RecipeSerializer<MultiblockRecipe>> MULTIBLOCK_SERIALIZER = RECIPE_SERIALIZERS.register("multiblock", () -> new CodecRecipeSerializer<>(MULTIBLOCK.get(), MultiblockRecipe::codec));
+
+    //Misc
+    public static final RegistryEntry<RecipeType<DungeonRecipe>> DUNGEON = RECIPE_TYPES.register("dungeon", () -> CodecRecipeType.of("dungeon"));
+    public static final RegistryEntry<RecipeSerializer<DungeonRecipe>> DUNGEON_SERIALIZER = RECIPE_SERIALIZERS.register("dungeon", () -> new CodecRecipeSerializer<>(DUNGEON.get(), DungeonRecipe::codec));
 }

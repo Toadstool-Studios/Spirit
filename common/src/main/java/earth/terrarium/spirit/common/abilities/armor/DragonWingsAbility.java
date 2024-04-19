@@ -20,21 +20,8 @@ public class DragonWingsAbility implements ArmorAbility {
 
     @Override
     public void onArmorTick(ItemStack stack, Level level, Player player) {
-        if (
-                AbilityUtils.hasArmorAbility(player, SpiritAbilities.ENDERMAN, EquipmentSlot.HEAD)
-                && AbilityUtils.hasArmorAbility(player, SpiritAbilities.ENDERMAN, EquipmentSlot.LEGS)
-                && AbilityUtils.hasArmorAbility(player, SpiritAbilities.ENDERMAN, EquipmentSlot.FEET)
-        ) {
-            if(!player.getAbilities().mayfly) {
-                player.getAbilities().mayfly = true;
-                player.onUpdateAbilities();
-            }
-        } else if (
-                player.getAbilities().mayfly
-                && !player.getAbilities().instabuild
-        ) {
-            player.getAbilities().mayfly = false;
-            player.getAbilities().flying = false;
+        if(!player.getAbilities().mayfly) {
+            player.getAbilities().mayfly = true;
             player.onUpdateAbilities();
         }
     }

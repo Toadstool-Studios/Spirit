@@ -1,9 +1,7 @@
 package earth.terrarium.spirit.common.blockentity;
 
-import earth.terrarium.spirit.api.souls.impl.BlockEntitySoulContainer;
 import earth.terrarium.spirit.api.utils.SoulfulCreature;
 import earth.terrarium.spirit.api.souls.base.SoulContainingBlock;
-import earth.terrarium.spirit.api.souls.base.SoulContainer;
 import earth.terrarium.spirit.common.containers.SoulCrystalBlockContainer;
 import earth.terrarium.spirit.common.registry.SpiritBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -38,8 +36,8 @@ public class SoulCrystalBlockEntity extends BlockEntity implements SoulContainin
     }
 
     public Entity getOrCreateEntity() {
-        if ((this.entity == null || this.entity.getType() != this.getContainer().getSoulStack(0).getEntity()) && this.hasLevel() && getContainer().getSoulStack(0).getEntity() != null) {
-            this.entity = this.getContainer().getSoulStack(0).getEntity().create(getLevel());
+        if ((this.entity == null || this.entity.getType() != this.getContainer().getStackInSlot(0).getEntity()) && this.hasLevel() && getContainer().getStackInSlot(0).getEntity() != null) {
+            this.entity = this.getContainer().getStackInSlot(0).getEntity().create(getLevel());
             if (entity instanceof SoulfulCreature corrupted) corrupted.setIfSoulless(true);
         }
         return entity;

@@ -1,5 +1,6 @@
 package earth.terrarium.spirit.client.fabric;
 
+import earth.terrarium.spirit.client.SpiritClient;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.minecraft.client.renderer.RenderType;

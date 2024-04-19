@@ -41,20 +41,29 @@ public class PedestalBlock extends BaseEntityBlock {
     }
 
     public @NotNull InteractionResult use(@NotNull BlockState blockState, @NotNull Level level, @NotNull BlockPos blockPos, @NotNull Player player, @NotNull InteractionHand interactionHand, @NotNull BlockHitResult blockHitResult) {
-        if (!level.isClientSide && interactionHand == InteractionHand.MAIN_HAND) {
-            //insert item
-            ItemStack stack = player.getItemInHand(interactionHand);
-            BlockEntity blockEntity = level.getBlockEntity(blockPos);
-            if (blockEntity instanceof PedestalBlockEntity cage) {
-                if (cage.isEmpty() && !stack.isEmpty()) {
-                    cage.setItem(0, stack);
-                    player.setItemInHand(interactionHand, ItemStack.EMPTY);
-                    cage.update();
-                    return InteractionResult.SUCCESS;
-                } else if (stack.isEmpty()) {
-                    player.setItemInHand(interactionHand, cage.removeItemNoUpdate(0));
-                    cage.update();
-                    return InteractionResult.SUCCESS;
+        if (interactionHand == InteractionHand.MAIN_HAND) {
+            if (!level.isClientSide) {
+                ItemStack stack = player.getItemInHand(interactionHand);
+                BlockEntity blockEntity = level.getBlockEntity(blockPos);
+                if (blockEntity instanceof PedestalBlockEntity cage) {
+                    if (cage.isEmpty() && !stack.isEmpty()) {
+                        cage.setItem(0, stack);
+                        player.setItemInHand(interactionHand, ItemStack.EMPTY);
+                        cage.update();
+                        return InteractionResult.SUCCESS;
+                    } else if (stack.isEmpty()) {
+                        player.setItemInHand(interactionHand, cage.removeItemNoUpdate(0));
+                        cage.update();
+                        return InteractionResult.SUCCESS;
+                    }
+                }
+            } else {
+                ItemStack stack = player.getItemInHand(interactionHand);
+                BlockEntity blockEntity = level.getBlockEntity(blockPos);
+                if (blockEntity instanceof PedestalBlockEntity cage) {
+                    if ((cage.isEmpty() && !stack.isEmpty()) || (stack.isEmpty() && !cage.isEmpty())) {
+                        return InteractionResult.SUCCESS;
+                    }
                 }
             }
         }

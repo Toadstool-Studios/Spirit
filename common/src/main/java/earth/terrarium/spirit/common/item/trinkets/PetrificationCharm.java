@@ -2,10 +2,11 @@ package earth.terrarium.spirit.common.item.trinkets;
 
 import earth.terrarium.spirit.api.souls.Atunable;
 import earth.terrarium.spirit.common.config.SpiritConfig;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.Level;
 
 public class PetrificationCharm extends Item implements Atunable {
     public static final String ATTUNEMENT_TAG = "Attunement";
@@ -15,9 +16,8 @@ public class PetrificationCharm extends Item implements Atunable {
     }
 
     @Override
-    public void setAttunement(ItemStack stack, EntityType<?> type, boolean critical) {
-        stack.getOrCreateTag().putString(ATTUNEMENT_TAG,  EntityType.getKey(type).toString());
-        stack.getOrCreateTag().putBoolean(CRITICAL_TAG, critical);
+    public boolean meetsRequirements(Level level, BlockPos centerPos, ItemStack atunnableItem) {
+        return false;
     }
 
     @Override

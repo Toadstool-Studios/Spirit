@@ -1,0 +1,43 @@
+{
+  "type": "spirit:transmutation",
+  "catalyst": {
+    "item": "minecraft:coal"
+  },
+  "inputs": [
+    {
+      "type": "spirit:item",
+      "ingredient": {
+        "item": "minecraft:blaze_rod"
+      }
+    },
+    {
+      "type": "spirit:item",
+      "ingredient": {
+        "item": "minecraft:blaze_rod"
+      }
+    },
+    {
+      "type": "spirit:item",
+      "ingredient": {
+        "item": "minecraft:blaze_rod"
+      }
+    },
+    {
+      "type": "spirit:item",
+      "ingredient": {
+        "item": "minecraft:blaze_rod"
+      }
+    },
+    {
+      "type": "spirit:fluid",
+      "ingredient": {
+        "fluid": "minecraft:lava"
+      },
+      "millibuckets": 1000
+    }
+  ],
+  "result": {
+    "type": "spirit:item",
+    "item": "minecraft:blaze_rod"
+  }
+}

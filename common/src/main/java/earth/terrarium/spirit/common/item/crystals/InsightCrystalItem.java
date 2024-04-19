@@ -18,7 +18,7 @@ public class InsightCrystalItem extends Item {
         SoulContainer container = SoulContainer.of(useOnContext.getLevel(), useOnContext.getClickedPos(), null);
         if (container != null) {
             if (useOnContext.getPlayer() != null) {
-                useOnContext.getPlayer().displayClientMessage(container.getSoulStack(0).toComponent(), true);
+                useOnContext.getPlayer().displayClientMessage(container.getStackInSlot(0).toComponent(), true);
                 return InteractionResult.SUCCESS;
             }
         }

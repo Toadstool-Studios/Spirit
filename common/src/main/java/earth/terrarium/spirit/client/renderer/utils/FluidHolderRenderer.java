@@ -50,6 +50,63 @@ public class FluidHolderRenderer {
         builder.vertex(matrix4f, x1, verticalOffset, z1).color(r, g, b, a).uv(texture.getU(0), texture.getV(16)).uv2(light).normal(0, 0F, 0).endVertex();
     }
 
+    public static void renderFlorb(AABB bounds, FluidHolder fluid, PoseStack stack, MultiBufferSource source, int light) {
+        stack.pushPose();
+        int color = ClientFluidHooks.getFluidColor(fluid);
+        TextureAtlasSprite texture = ClientFluidHooks.getFluidSprite(fluid);
+        RenderType type = Minecraft.useShaderTransparency() ? RenderType.translucentMovingBlock() : RenderType.translucentNoCrumbling();
+        VertexConsumer buffer = source.getBuffer(type);
+        Matrix4f matrix4f = stack.last().pose();
+        int r = FastColor.ARGB32.red(color);
+        int g = FastColor.ARGB32.green(color);
+        int b = FastColor.ARGB32.blue(color);
+        int a = FastColor.ARGB32.alpha(color);
+
+        double uvMinX = (16 - bounds.getXsize() * 32) / 2f;
+        double uvMinY = (16 - bounds.getYsize() * 32) / 2f;
+        double uvMinZ = (16 - bounds.getZsize() * 32) / 2f;
+        double uvMaxX = 16 - (16 - bounds.getXsize() * 32) / 2f;
+        double uvMaxY = 16 - (16 - bounds.getYsize() * 32) / 2f;
+        double uvMaxZ = 16 - (16 - bounds.getZsize() * 32) / 2f;
+
+        //Front
+        buffer.vertex(matrix4f, (float) bounds.minX, (float) bounds.maxY, (float) bounds.minZ).color(r, g, b, a).uv(texture.getU(uvMinX), texture.getV(uvMaxY)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.maxX, (float) bounds.maxY, (float) bounds.minZ).color(r, g, b, a).uv(texture.getU(uvMaxX), texture.getV(uvMaxY)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.maxX, (float) bounds.minY, (float) bounds.minZ).color(r, g, b, a).uv(texture.getU(uvMaxX), texture.getV(uvMinY)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.minX, (float) bounds.minY, (float) bounds.minZ).color(r, g, b, a).uv(texture.getU(uvMinX), texture.getV(uvMinY)).uv2(light).normal(0, 0F, 0).endVertex();
+
+        //Back
+        buffer.vertex(matrix4f, (float) bounds.maxX, (float) bounds.maxY, (float) bounds.maxZ).color(r, g, b, a).uv(texture.getU(uvMaxX), texture.getV(uvMaxY)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.minX, (float) bounds.maxY, (float) bounds.maxZ).color(r, g, b, a).uv(texture.getU(uvMinX), texture.getV(uvMaxY)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.minX, (float) bounds.minY, (float) bounds.maxZ).color(r, g, b, a).uv(texture.getU(uvMinX), texture.getV(uvMinY)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.maxX, (float) bounds.minY, (float) bounds.maxZ).color(r, g, b, a).uv(texture.getU(uvMaxX), texture.getV(uvMinY)).uv2(light).normal(0, 0F, 0).endVertex();
+
+        //Top
+        buffer.vertex(matrix4f, (float) bounds.minX, (float) bounds.maxY, (float) bounds.maxZ).color(r, g, b, a).uv(texture.getU(uvMinX), texture.getV(uvMaxZ)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.maxX, (float) bounds.maxY, (float) bounds.maxZ).color(r, g, b, a).uv(texture.getU(uvMaxX), texture.getV(uvMaxZ)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.maxX, (float) bounds.maxY, (float) bounds.minZ).color(r, g, b, a).uv(texture.getU(uvMaxX), texture.getV(uvMinZ)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.minX, (float) bounds.maxY, (float) bounds.minZ).color(r, g, b, a).uv(texture.getU(uvMinX), texture.getV(uvMinZ)).uv2(light).normal(0, 0F, 0).endVertex();
+
+        //Bottom
+        buffer.vertex(matrix4f, (float) bounds.minX, (float) bounds.minY, (float) bounds.minZ).color(r, g, b, a).uv(texture.getU(uvMinX), texture.getV(uvMinZ)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.maxX, (float) bounds.minY, (float) bounds.minZ).color(r, g, b, a).uv(texture.getU(uvMaxX), texture.getV(uvMinZ)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.maxX, (float) bounds.minY, (float) bounds.maxZ).color(r, g, b, a).uv(texture.getU(uvMaxX), texture.getV(uvMaxZ)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.minX, (float) bounds.minY, (float) bounds.maxZ).color(r, g, b, a).uv(texture.getU(uvMinX), texture.getV(uvMaxZ)).uv2(light).normal(0, 0F, 0).endVertex();
+
+        //Left
+        buffer.vertex(matrix4f, (float) bounds.minX, (float) bounds.maxY, (float) bounds.maxZ).color(r, g, b, a).uv(texture.getU(uvMaxZ), texture.getV(uvMaxY)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.minX, (float) bounds.maxY, (float) bounds.minZ).color(r, g, b, a).uv(texture.getU(uvMinZ), texture.getV(uvMaxY)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.minX, (float) bounds.minY, (float) bounds.minZ).color(r, g, b, a).uv(texture.getU(uvMinZ), texture.getV(uvMinY)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.minX, (float) bounds.minY, (float) bounds.maxZ).color(r, g, b, a).uv(texture.getU(uvMaxZ), texture.getV(uvMinY)).uv2(light).normal(0, 0F, 0).endVertex();
+
+        //Right
+        buffer.vertex(matrix4f, (float) bounds.maxX, (float) bounds.maxY, (float) bounds.minZ).color(r, g, b, a).uv(texture.getU(uvMinZ), texture.getV(uvMaxY)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.maxX, (float) bounds.maxY, (float) bounds.maxZ).color(r, g, b, a).uv(texture.getU(uvMaxZ), texture.getV(uvMaxY)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.maxX, (float) bounds.minY, (float) bounds.maxZ).color(r, g, b, a).uv(texture.getU(uvMaxZ), texture.getV(uvMinY)).uv2(light).normal(0, 0F, 0).endVertex();
+        buffer.vertex(matrix4f, (float) bounds.maxX, (float) bounds.minY, (float) bounds.minZ).color(r, g, b, a).uv(texture.getU(uvMinZ), texture.getV(uvMinY)).uv2(light).normal(0, 0F, 0).endVertex();
+        stack.popPose();
+    }
+
     public static @NotNull AABB bounds() {
         return new AABB(0.25, 0.6875, 0.25, 0.75, 0.875, 0.75);
     }

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record TransmutationRecipe(ResourceLocation id, Ingredient catalyst, short duration,
-                                  List<RitualComponent<?>> inputs, RitualResult<?> result) implements CodecRecipe<Container> {
+                                  List<RitualComponent<?>> inputs, RitualResult<?> result) implements CodecRecipe<Container>, MagicalRecipe {
 
     public static Codec<TransmutationRecipe> codec(ResourceLocation id) {
         return RecordCodecBuilder.create(instance -> instance.group(

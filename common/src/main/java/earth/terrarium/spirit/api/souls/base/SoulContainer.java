@@ -58,27 +58,19 @@ public interface SoulContainer {
         return getter.getContainer(stack);
     }
 
-    List<SoulStack> getSouls();
+    int insertIntoSlot(int slot, SoulStack soulStack, boolean simulate);
 
-    SoulStack getSoulStack(int index);
+    int insert(SoulStack soulStack, boolean simulate);
 
-    int insertIntoSlot(SoulStack soulStack, int slot, InteractionMode mode);
+    SoulStack extractFromSlot(int slot, int amount, boolean simulate);
 
-    int insert(SoulStack soulStack, InteractionMode mode);
+    SoulStack extract(int amount, boolean simulate);
 
-    SoulStack extractFromSlot(SoulStack soulStack, int slot, InteractionMode mode);
+    int slotCapacity(int slot);
 
-    SoulStack extract(SoulStack soulStack, InteractionMode mode);
+    int slotCount();
 
-    CompoundTag serialize(CompoundTag tag);
-
-    void deserialize(CompoundTag tag);
-
-    int maxCapacity();
-
-    default int slotCount() {
-        return getSouls().size();
-    }
+    SoulStack getStackInSlot(int slot);
 
     default boolean allowsInsertion() {
         return true;
@@ -89,6 +81,11 @@ public interface SoulContainer {
     }
 
     default boolean isEmpty() {
-        return getSouls().stream().allMatch(SoulStack::isEmpty) || getSouls().isEmpty();
+        for (int i = 0; i < slotCount(); i++) {
+            if (!getStackInSlot(i).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

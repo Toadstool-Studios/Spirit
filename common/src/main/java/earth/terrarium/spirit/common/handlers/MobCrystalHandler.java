@@ -1,7 +1,7 @@
 package earth.terrarium.spirit.common.handlers;
 
-import earth.terrarium.spirit.common.containers.ItemWrappedMobContainer;
-import earth.terrarium.spirit.common.containers.SingleMobContainer;
+import earth.terrarium.spirit.api.souls.base.MobContainer;
+import earth.terrarium.spirit.api.souls.impl.SingleMobContainer;
 import earth.terrarium.spirit.common.item.crystals.MobCrystalItem;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -18,9 +18,9 @@ public class MobCrystalHandler {
             ItemStack stack = player.getItemInHand(hand);
             if (stack.getItem() instanceof MobCrystalItem item) {
                 if (!player.level().isClientSide) {
-                    ItemWrappedMobContainer container = item.getContainer(stack);
+                    MobContainer container = item.getContainer(stack);
                     if (container != null) {
-                        if (container.insertMob(livingEntity)) {
+                        if (container.insertMob(livingEntity, false)) {
                             entity.discard();
                             return InteractionResult.CONSUME;
                         }
@@ -34,11 +34,9 @@ public class MobCrystalHandler {
 
     public static float mobCrystalProperty(ItemStack itemStack) {
         if (itemStack.getItem() instanceof MobCrystalItem item) {
-            ItemWrappedMobContainer container = item.getContainer(itemStack);
+            SingleMobContainer container = item.getContainer(itemStack);
             if (container != null) {
-                if (container.container() instanceof SingleMobContainer singleMobContainer) {
-                    return singleMobContainer.entityType == null ? 0 : 1;
-                }
+                return container.soulStack == null ? 0 : 1;
             }
         }
         return 0;

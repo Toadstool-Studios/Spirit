@@ -1,8 +1,10 @@
 package earth.terrarium.spirit.common.item.crystals;
 
+import earth.terrarium.spirit.common.block.DungeonPortalShape;
 import earth.terrarium.spirit.common.registry.SpiritBlocks;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -13,10 +15,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseFireBlock;
-import net.minecraft.world.level.block.CampfireBlock;
-import net.minecraft.world.level.block.CandleBlock;
-import net.minecraft.world.level.block.CandleCakeBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -62,6 +61,26 @@ public class IgnitionCrystalItem extends Item {
 			}
 
 			return InteractionResult.sidedSuccess(level.isClientSide());
+		}
+	}
+
+	private static boolean isPortal(Level level, BlockPos pos, Direction direction) {
+		BlockPos.MutableBlockPos mutableBlockPos = pos.mutable();
+		boolean bl = false;
+
+        for (Direction direction2 : Direction.values()) {
+            BlockState blockState = level.getBlockState(mutableBlockPos.set(pos).move(direction2));
+            if (blockState.is(SpiritBlocks.SOUL_SLATE.get()) || blockState.is(SpiritBlocks.DUNGEON_FRAME.get())) {
+                bl = true;
+                break;
+            }
+        }
+
+		if (!bl) {
+			return false;
+		} else {
+			Direction.Axis axis = direction.getAxis().isHorizontal() ? direction.getCounterClockWise().getAxis() : Direction.Plane.HORIZONTAL.getRandomAxis(level.random);
+			return DungeonPortalShape.findEmptyPortalShape(level, pos, axis).isPresent();
 		}
 	}
 }
