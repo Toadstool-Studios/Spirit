@@ -18,10 +18,13 @@ import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class PedestalRecipeCategory extends BaseCategory<PedestalRecipe> {
@@ -54,14 +57,18 @@ public class PedestalRecipeCategory extends BaseCategory<PedestalRecipe> {
         }
         var nbt = new CompoundTag();
         nbt.putBoolean("Corrupted", true);
-        var entityTypes = recipe.entityInput().stream().filter(Holder::isBound).map(Holder::value).map(type -> new EntityIngredient(type, 45F, Optional.of(nbt))).toList();
+        var entityTypes = recipe.entityInput().stream().filter(Holder::isBound).map(Holder::value).toList();
+        var entityIngredients = entityTypes.stream().map(type -> new EntityIngredient(type, 45F, Optional.of(nbt))).toList();
+        var spawnEggs = entityTypes.stream().map(SpawnEggItem::byId).filter(Objects::nonNull).map(SpawnEggItem::getDefaultInstance).toList();
         if(recipe.activationItem().isPresent()) {
             builder.addSlot(RecipeIngredientRole.CATALYST, 93, 21).addIngredients(recipe.activationItem().get()).addTooltipCallback((recipeSlotView, tooltip) -> {
                 if(recipe.consumesActivator()) tooltip.add(Component.translatable("spirit.jei.soul_transmutation.consumes").withStyle(ChatFormatting.RED));
             });
         }
-        builder.addSlot(RecipeIngredientRole.INPUT, 28, 37).addIngredients(SpiritPlugin.ENTITY_INGREDIENT, entityTypes).setCustomRenderer(SpiritPlugin.ENTITY_INGREDIENT, BigEntityRenderer.INSTANCE);
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 124, 37).addIngredient(SpiritPlugin.ENTITY_INGREDIENT, new EntityIngredient(recipe.entityOutput(), -45F, recipe.shouldSummon() ? recipe.outputNbt() : recipe.outputNbt().isPresent() ? Optional.of(nbt.merge(recipe.outputNbt().get())) : Optional.of(nbt))).setCustomRenderer(SpiritPlugin.ENTITY_INGREDIENT, BigEntityRenderer.INSTANCE);
+        builder.addSlot(RecipeIngredientRole.INPUT, 28, 37).addIngredients(SpiritPlugin.ENTITY_INGREDIENT, entityIngredients).setCustomRenderer(SpiritPlugin.ENTITY_INGREDIENT, BigEntityRenderer.INSTANCE);
+        builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).addIngredientsUnsafe(spawnEggs);
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 124, 37).addIngredient(SpiritPlugin.ENTITY_INGREDIENT, new EntityIngredient(recipe.entityOutput(), -45F, recipe.outputNbt().isPresent() ? Optional.of(nbt.merge(recipe.outputNbt().get())) : Optional.of(nbt))).setCustomRenderer(SpiritPlugin.ENTITY_INGREDIENT, BigEntityRenderer.INSTANCE);
+        builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addIngredients(Ingredient.of(SpawnEggItem.byId(recipe.entityOutput())));
     }
 
     @Override

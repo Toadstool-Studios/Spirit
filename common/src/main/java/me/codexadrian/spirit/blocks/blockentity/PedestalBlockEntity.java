@@ -89,6 +89,8 @@ public class PedestalBlockEntity extends BlockEntity implements WorldlyContainer
         super.load(compoundTag);
         if (compoundTag.contains("item")) {
             item = ItemStack.of(compoundTag.getCompound("item"));
+        } else {
+            item = ItemStack.EMPTY;
         }
     }
 
@@ -97,6 +99,8 @@ public class PedestalBlockEntity extends BlockEntity implements WorldlyContainer
         super.saveAdditional(compoundTag);
         if (!item.isEmpty()) {
             compoundTag.put("item", item.save(new CompoundTag()));
+        } else {
+            compoundTag.remove("item");
         }
     }
 

@@ -111,18 +111,14 @@ public class SoulCageBlockEntity extends BlockEntity implements WorldlyContainer
     public void load(@NotNull CompoundTag compoundTag) {
         super.load(compoundTag);
         type = null;
-        if (compoundTag.contains("crystal")) {
-            soulCrystal = ItemStack.of(compoundTag.getCompound("crystal"));
-            setType();
-        }
+        soulCrystal = ItemStack.of(compoundTag.getCompound("crystal"));
+        setType();
     }
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag compoundTag) {
         super.saveAdditional(compoundTag);
-        if (!soulCrystal.isEmpty()) {
-            compoundTag.put("crystal", soulCrystal.save(new CompoundTag()));
-        }
+        compoundTag.put("crystal", soulCrystal.save(new CompoundTag()));
     }
 
     @Override

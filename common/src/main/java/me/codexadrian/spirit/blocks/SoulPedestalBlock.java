@@ -81,7 +81,7 @@ public class SoulPedestalBlock extends BaseEntityBlock {
                         for (var recipe : recipes) {
                             if (RecipeUtils.validatePedestals(blockPos, level, new ArrayList<>(recipe.ingredients()), false)) {
                                 soulPedestal.setRecipe(recipe);
-                                if (recipe.consumesActivator()) stack.shrink(1);
+                                if (recipe.consumesActivator() && !stack.isEmpty()) stack.shrink(1);
                                 return InteractionResult.sidedSuccess(level.isClientSide());
                             }
                         }

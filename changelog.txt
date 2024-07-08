@@ -1,1 +1,3 @@
-> Fix level being null occassionally in the soul crystal item
+> Fix issues with nbt data not spawning the mob correctly
+> Summoning is no longer optional on recipes
+> Fix issues with pedestals not storing data correctly

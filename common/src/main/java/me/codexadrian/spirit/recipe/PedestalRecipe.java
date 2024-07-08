@@ -23,18 +23,17 @@ import java.util.List;
 import java.util.Optional;
 
 public record PedestalRecipe(ResourceLocation id, HolderSet<EntityType<?>> entityInput, Optional<Ingredient> activationItem, boolean consumesActivator, List<Ingredient> ingredients,
-                             EntityType<?> entityOutput, int duration, boolean shouldSummon,
+                             EntityType<?> entityOutput, int duration,
                              Optional<CompoundTag> outputNbt) implements SyncedData {
     public static Codec<PedestalRecipe> codec(ResourceLocation id) {
         return RecordCodecBuilder.create(instance -> instance.group(
                 RecordCodecBuilder.point(id),
                 TagAndListSetCodec.of(Registry.ENTITY_TYPE).fieldOf("entityInput").forGetter(PedestalRecipe::entityInput),
                 CodecUtils.INGREDIENT_CODEC.optionalFieldOf("activatorItem").forGetter(PedestalRecipe::activationItem),
-                Codec.BOOL.fieldOf("consumesActivator").orElse(false).forGetter(PedestalRecipe::consumesActivator),
+                Codec.BOOL.fieldOf("consumesActivator").orElse(true).forGetter(PedestalRecipe::consumesActivator),
                 CodecUtils.INGREDIENT_CODEC.listOf().fieldOf("itemInputs").forGetter(PedestalRecipe::ingredients),
                 Registry.ENTITY_TYPE.byNameCodec().fieldOf("entityOutput").forGetter(PedestalRecipe::entityOutput),
                 Codec.INT.fieldOf("duration").orElse(60).forGetter(PedestalRecipe::duration),
-                Codec.BOOL.fieldOf("shouldSummonMob").orElse(false).forGetter(PedestalRecipe::shouldSummon),
                 CompoundTag.CODEC.optionalFieldOf("outputNbt").forGetter(PedestalRecipe::outputNbt)
         ).apply(instance, PedestalRecipe::new));
     }
@@ -60,7 +59,7 @@ public record PedestalRecipe(ResourceLocation id, HolderSet<EntityType<?>> entit
             if(recipe.activationItem().isPresent()) {
                 stackMatches = recipe.activationItem().get().test(stack);
             } else {
-                stackMatches = stack.isEmpty();
+                stackMatches = true;
             }
             return recipe.entityInput().contains(entity.builtInRegistryHolder()) && stackMatches;
         }).toList();

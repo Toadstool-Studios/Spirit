@@ -36,7 +36,7 @@ public class PedestalRecipeCategory implements DisplayCategory<PedestalDisplay> 
             new int[]{55, 64},
             new int[]{32, 71},
             new int[]{9, 64},
-            new int[]{2, 49},
+            new int[]{2, 41},
             new int[]{9, 18}
     );
 
@@ -75,7 +75,7 @@ public class PedestalRecipeCategory implements DisplayCategory<PedestalDisplay> 
         var recipe = display.recipe();
 
         for (int i = 0; i < Math.min(recipe.ingredients().size(), 8); i++) {
-            widgets.add(Widgets.createSlot(new Point(startX + slots.get(i)[0], startY + slots.get(i)[1])).markInput().entries(EntryIngredients.ofIngredient(recipe.ingredients().get(i))));
+            widgets.add(Widgets.createSlot(new Point(startX + slots.get(i)[0], startY + slots.get(i)[1])).markInput().entries(EntryIngredients.ofIngredient(recipe.ingredients().get(i))).disableBackground());
         }
 
         var nbt = new CompoundTag();
@@ -93,7 +93,7 @@ public class PedestalRecipeCategory implements DisplayCategory<PedestalDisplay> 
             widgets.add(Widgets.createTooltip(new Rectangle(startX + 93, startY + 21, 18, 18), Component.translatable("spirit.jei.soul_transmutation.empty_hand")));
         }
         widgets.add(Widgets.createSlot(new Rectangle(startX + 28 - 1, startY + 37 - 1, 26, 26)).markInput().disableBackground().entries(EntryIngredients.of(SpiritPlugin.ENTITY_INGREDIENT, entityTypes)));
-        widgets.add(Widgets.createSlot(new Rectangle(startX + 124 - 1, startY + 37 - 1, 26, 26)).markOutput().disableBackground().entry(EntryStack.of(SpiritPlugin.ENTITY_INGREDIENT, new EntityIngredient(recipe.entityOutput(), -45F, recipe.shouldSummon() ? Optional.empty() : Optional.of(nbt)))));
+        widgets.add(Widgets.createSlot(new Rectangle(startX + 124 - 1, startY + 37 - 1, 26, 26)).markOutput().disableBackground().entry(EntryStack.of(SpiritPlugin.ENTITY_INGREDIENT, new EntityIngredient(recipe.entityOutput(), -45F, Optional.of(nbt)))));
 
         return widgets;
     }
